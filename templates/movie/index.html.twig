@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	Movie Generator
+{% endblock %}
+{% block body %}
+	<div class="container-fluid py-3">
+		<form method="get" id="movie-toolbar" class="movie-toolbar">
+			<input type="hidden" name="mode" value="{{ mode }}">
+			<div class="toolbar-box">
+				<label>Language</label>
+				<select name="locale" class="form-select">
+					<option value="en_US" {{ locale == 'en_US' ? 'selected' }}>
+						English (US)
+					</option>
+					<option value="de_DE" {{ locale == 'de_DE' ? 'selected' }}>
+						German (DE)
+					</option>
+				</select>
+			</div>
+			<div class="toolbar-box">
+				<label>Seed</label>
+				<div class="input-group">
+					<input type="number" name="seed" value="{{ seed }}" min="0" max="281474976710655" step="1" required class="form-control">
+					<a href="{{ path('app_movie', { randomSeed: 1, mode: mode, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}" class="btn" title="Generate random seed">
+						<i class="bi bi-shuffle"></i>
+					</a>
+				</div>
+			</div>
+			<div class="toolbar-box">
+				<label>
+					Likes:
+					<span id="likes-value">
+						{{ likesAverage }}
+					</span>
+				</label>
+				<input type="range" name="likes" min="0" max="10" step="0.1" value="{{ likesAverage }}" class="form-range">
+			</div>
+			<div class="toolbar-box">
+				<label>Reviews</label>
+				<input type="number" name="reviews" min="0" max="10" step="0.1" value="{{ reviewsAverage }}" required class="form-control">
+			</div>
+			<div class="toolbar-view">
+				<a href="{{ path('app_movie', { mode: 'table', seed: seed, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}" class="btn {{ mode == 'table' ? 'btn-primary' : 'btn-outline-primary' }}" title="Table view">
+					<i class="bi bi-table"></i>
+				</a>
+				<a href="{{ path('app_movie', { mode: 'gallery', seed: seed, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}" class="btn {{ mode == 'gallery' ? 'btn-primary' : 'btn-outline-primary' }}" title="Gallery view">
+					<i class="bi bi-grid-3x3-gap"></i>
+				</a>
+			</div>
+		</form>
+		{% if mode == 'table' %}
+			<div class="table-responsive">
+				<table class="table align-middle">
+					<thead>
+						<tr>
+							<th></th>
+							<th>#</th>
+							<th>Genre</th>
+							<th>Title</th>
+							<th>Cast</th>
+							<th>Year</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for movie in movies %}
+							<tr>
+								<td>
+									<button type="button" class="btn btn-sm btn-light movie-expand" data-target="details-{{ movie.index }}">
+										<i class="bi bi-chevron-down"></i>
+									</button>
+								</td>
+								<td>
+									{{ movie.index }}
+								</td>
+								<td>
+									{{ movie.genre }}
+								</td>
+								<td>
+									{{ movie.title }}
+								</td>
+								<td>
+									{{ movie.actors|join(', ') }}
+								</td>
+								<td>
+									{{ movie.year }}
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" class="p-0 border-0">
+									<div id="details-{{ movie.index }}" hidden>
+										<div class="p-4 bg-light">
+											<div class="row g-4">
+												<div class="col-md-5">
+													<div class="trailer" data-trailer="{{ movie.trailer|json_encode|e('html_attr') }}">
+														<div class="trailer-preview">
+															<video class="trailer-preview-video" src="/trailer/clips/{{ movie.trailer.preview.clip }}#t={{ movie.trailer.preview.start }}" muted preload="metadata"></video>
+															<div class="trailer-preview-title">
+																{{ movie.title }}
+															</div>
+															<button type="button" class="trailer-play btn btn-dark">
+																<i class="bi bi-play-fill"></i>
+																Watch trailer
+															</button>
+														</div>
+														<div class="trailer-player" hidden>
+															<video class="trailer-video" muted playsinline></video>
+															<div class="trailer-text"></div>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-7">
+													<h3>
+														{{ movie.title }}
+													</h3>
+													<p class="text-muted">
+														{{ movie.year }}
+														·
+														{{ movie.genre }}
+													</p>
+													<p>
+														<strong>Cast:</strong>
+														{{ movie.actors|join(', ') }}
+													</p>
+													<p>
+														<strong>Likes:</strong>
+														{{ movie.likes }}
+													</p>
+													<h5>Reviews</h5>
+													{% if movie.reviews is empty %}
+														<p class="text-muted">
+															No reviews
+														</p>
+													{% else %}
+														{% for review in movie.reviews %}
+															<p>
+																{{ review }}
+															</p>
+														{% endfor %}
+													{% endif %}
+												</div>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<nav>
+				<ul class="pagination justify-content-center">
+					<li class="page-item {{ page == 1 ? 'disabled' }}">
+						<a class="page-link" href="{{ path('app_movie', { page: page - 1, mode: mode, seed: seed, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}">
+							Previous
+						</a>
+					</li>
+					{% for number in max(1, page - 2)..(page + 2) %}
+						<li class="page-item {{ number == page ? 'active' }}">
+							<a class="page-link" href="{{ path('app_movie', { page: number, mode: mode, seed: seed, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}">
+								{{ number }}
+							</a>
+						</li>
+					{% endfor %}
+					<li class="page-item">
+						<a class="page-link" href="{{ path('app_movie', { page: page + 1, mode: mode, seed: seed, locale: locale, likes: likesAverage, reviews: reviewsAverage }) }}">
+							Next
+						</a>
+					</li>
+				</ul>
+			</nav>
+		{% else %}
+			<div id="gallery" class="row g-3">
+				{% include 'movie/_gallery_cards.html.twig' %}
+			</div>
+			<div id="gallery-loader" data-page="{{ page + 1 }}" data-seed="{{ seed }}" data-locale="{{ locale }}" data-likes="{{ likesAverage }}" data-reviews="{{ reviewsAverage }}"></div>
+		{% endif %}
+	</div>
+{% endblock %}

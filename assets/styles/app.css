@@ -1,0 +1,168 @@
+body {
+    background-color: white;
+}
+
+.trailer {
+    position: relative;
+    width: 640px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: black;
+}
+
+.trailer-preview,
+.trailer-player {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: black;
+}
+
+.trailer-player[hidden],
+.trailer-preview[hidden] {
+    display: none;
+}
+
+.trailer-preview-video,
+.trailer-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.trailer-preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.trailer-preview-title {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 58px;
+    z-index: 1;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: left;
+    text-shadow: 0 2px 8px black;
+}
+
+.trailer-play {
+    position: absolute;
+    left: 24px;
+    bottom: 16px;
+    z-index: 2;
+}
+
+.trailer-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 2px 8px black;
+}
+
+.movie-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    margin: 10px 12px 16px;
+    background: #f8f9fa;
+}
+
+.toolbar-box {
+    width: 220px;
+    height: 64px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.toolbar-box label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.875rem;
+    line-height: 1.1;
+    color: #6c757d;
+}
+
+.toolbar-box .form-control,
+.toolbar-box .form-select {
+    height: 28px;
+    min-height: 28px;
+    padding: 2px 6px;
+    font-size: 1rem;
+    line-height: 1.2;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.toolbar-box .input-group {
+    height: 28px;
+    align-items: center;
+}
+
+.toolbar-box .input-group .btn {
+    height: 28px;
+    padding: 0 6px;
+    border: 0;
+}
+
+.toolbar-box .form-range {
+    height: 28px;
+    margin: 0;
+}
+
+.toolbar-view {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toolbar-view .btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+input[name="seed"] {
+    appearance: textfield;
+}
+
+input[name="seed"]::-webkit-inner-spin-button,
+input[name="seed"]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+@media (max-width: 1100px) {
+    .movie-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .toolbar-view {
+        margin-left: 0;
+    }
+}
